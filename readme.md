@@ -1,7 +1,6 @@
 <h1 align="center">Vaccine Registration System</h1>
 
 <p align="center">
-<img src="https://github.com/Kartik-Shrikhande/Vaccine-Registration-Project.git" alt="Vaccine Registration" width="200">
 </p>
 
 <p align="center">
