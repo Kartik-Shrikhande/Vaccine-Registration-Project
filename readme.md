@@ -22,11 +22,11 @@
 
 ## Overview
 
-This project is about Registration of Vaccine , an user can create a account and book slot for him on given date if slosts time and date matches so user can register himself for perticular time to get vaccinize also user can get his dose accorrding to his vaccination status if user has taken none then he will get registered automatically for first dose of vaccine,if user has taken first dose of vaccine then he will get registered automatically for second dose of vaccine,if user has taken all two doses then he cant register himself for any dose
+This project is about Registration for Vaccination,a user can create a account and book slot for given date if slosts time and date matches so user can register himself for perticular time to get vaccinize also user can get his dose accorrding to his vaccination status if user has taken none then he will get registered automatically for first dose of vaccine,if user has taken first dose of vaccine then he will get registered automatically for second dose of vaccine,if user has taken all two doses then he cant register himself for any dose
 
 ## Vaccination Details
 
-- **Vaccination Period**: The vaccination drive is scheduled from June 1st, 2021, to June 30th, 2021.
+- **Vaccination Period**: The vaccination drive is scheduled from Jan 1st, 2024, to Jan 30th, 2024.
 
 - **Vaccination Timings**:slots are available every day from 10:00 AM to 5:00 PM.
 
@@ -34,7 +34,7 @@ This project is about Registration of Vaccine , an user can create a account and
 - 10:00 AM to 10:30 AM
 - 10:30 AM to 11:00 AM etc. till 05:00 PM
 
-- **Vaccine Doses**:10 vaccine doses available in each slot. These doses are the same for both the first and second doses.
+- **Vaccine Doses**:10 vaccine doses available in each slot.
 
 - **Total Number of Vaccine Doses**: With 30 days of vaccination and 14 slots each day, there are a total of 4,200 vaccine doses available during the entire vaccination drive.
 
@@ -52,9 +52,9 @@ This project is about Registration of Vaccine , an user can create a account and
 
 2. **User Login**: Registered users can log in using their phone number and password.
 
-3. **see Available Slots**: Users can view available vaccine slots for a given day.
+3. **see Available Slots**: Users can see available vaccine slots for a specific day and timings.
 
-4. **Book Vaccine Slot**: Users can register for a vaccine slot first or second dose on a specified date and time. They can only book a second dose after completing their first dose.
+4. **Book Vaccine Slot**: Users can register for a vaccine dose on a specific dates and timings.
 
 ### For Admins
 
@@ -66,6 +66,36 @@ This project is about Registration of Vaccine , an user can create a account and
 
 ## API Endpoints
 
+## Database Models
+
+### User Model
+
+- `name`: User's name.
+
+- `phoneNumber`: User's phone number (unique).
+
+- `password`: User's password.
+
+- `age`: User's age.
+
+- `pincode`: User's pincode.
+
+- `aadharNumber`: User's Aadhar number (unique).
+
+- `vaccinationStatus`: User's vaccination status ("None", "Done").
+
+
+### time Slot Model
+
+- `date`: Date of the vaccine slot.
+
+- `startTime`: Start time of the slot.
+
+- `endTime`: End time of the slot.
+
+- `availableDoses`: Number of available vaccine doses.
+
+
 ### User APIs
 
 1. **Register User**: Register a new user with required details.
@@ -76,31 +106,35 @@ This project is about Registration of Vaccine , an user can create a account and
 ```json
 
 {
-  "name": "John Doe1",
-  "phoneNumber": "12345678904",
-   "password": "password123",
+  "name": "John Doe",
+  "phoneNumber": "0123456789",
+  "password": "password123",
   "age": 30,
   "pincode": "123456",
-  "aadharNo": "1234567890123"
+  "aadharNo": "123456789021"
 }
 ```
 
 - Response (Success):
 ```json
 {
-    "message": "User registered successfully",
+    "message": "User Registered Successfully",
     "data": {
-        "name": "John Doe1",
-        "phoneNumber": "12345678904",
-        "password": "password123",
+        "name": "John Doe",
+        "phoneNumber": "0123456789",
+        "password": "$2b$10$X5C4XDOlJldKnFKnzERCQ.T8SYFQfbYLBcAlydLuLO6zRfGVWL2Pq",
         "age": 30,
         "pincode": "123456",
-        "aadharNo": "1234567890123",
-        "vaccinationStatus": "none",
-        "_id": "6507d4ad4917e34101081305",
+        "aadharNo": "123456789021",
+        "vaccinationStatus": "None",
+        "userType": "user",
+        "_id": "667bbd3417d80a5ad4a7a8ca",
+        "createdAt": "2024-06-26T07:03:16.110Z",
+        "updatedAt": "2024-06-26T07:03:16.110Z",
         "__v": 0
     }
 }
+
 ```
 
 2. **User Login**: User login with phone number and password.
@@ -110,7 +144,7 @@ This project is about Registration of Vaccine , an user can create a account and
 - Request Body:
 ```json
 {
-  "phoneNumber": "1234567890",
+  "phoneNumber": "0123456789",
   "password": "password123"
 }
 ```
@@ -119,7 +153,7 @@ This project is about Registration of Vaccine , an user can create a account and
 
 ```json
 {
-    "message": "Login successful"
+    "message": "Login Successful"
 }
 ```
 
@@ -136,21 +170,20 @@ This project is about Registration of Vaccine , an user can create a account and
 
 - `date` (required): Date in the format "YYYY-MM-DD"
 
-
-
 - Response (Success):
 
 ```json
 
 {
-    "message": "Available slots",
+    "message": "Available Slots",
+    "totalSlots": 14,
     "data": [
         {
-            "_id": "6506bfb4bfe95c0a267495e8",
-            "date": "2021-06-30T00:00:00.000Z",
-            "startTime": "04:30  PM",
-            "endTime": "05:00 PM",
-            "availableDoses": 6,
+            "_id": "667a6d7692fcbffc2caa8900",
+            "date": "2024-01-30T00:00:00.000Z",
+            "startTime": "15:30",
+            "endTime": "16:00",
+            "availableDoses": 10,
             "__v": 0
         },
 
@@ -166,7 +199,7 @@ This project is about Registration of Vaccine , an user can create a account and
 
 
 
-- Endpoint: `POST /slotBook/:userId
+- Endpoint: `POST /slot-book/:userId
 
 
 
@@ -192,9 +225,8 @@ This project is about Registration of Vaccine , an user can create a account and
 - Response (Success):
 
 ```json
-
 {
-    "message": "you have successfully booked your slot"
+    "message": "You Have Successfully Booked Your Slot"
 }
 ```
 
@@ -210,7 +242,7 @@ This project is about Registration of Vaccine , an user can create a account and
 ```json
 
 {
-    "username":"admin2",
+    "name":"admin",
     "password":"1234"
 }
 
@@ -221,7 +253,7 @@ This project is about Registration of Vaccine , an user can create a account and
 ```json
 
 {
-    "message": "successful"
+    "message": "Successfully Login"
 }
 
 ```
@@ -230,27 +262,31 @@ This project is about Registration of Vaccine , an user can create a account and
 2. **Total Registered Users**: Check the total number of registered users
 
 
-- Endpoint: `GET /totalRegisterUsers`
+- Endpoint: `GET /total-Registered-Users`
 
 - Response (Success):
 
 ```json
 {
     "status": true,
-    "message": "Total registered Users List",
-    "total": 4,
-    "registeredUsers": 
+    "message": "Total Registered Users List",
+    "total": 10,
+    "registeredUsers": [
         {
-            "_id": "65058482c4fa3a52a85e539b",
+            "_id": "667bbd3417d80a5ad4a7a8ca",
             "name": "John Doe",
-            "phoneNumber": "1234567890",
-            "password": "password123",
+            "phoneNumber": "0123456789",
+            "password": "$2b$10$X5C4XDOlJldKnFKnzERCQ.T8SYFQfbYLBcAlydLuLO6zRfGVWL2Pq",
             "age": 30,
             "pincode": "123456",
-            "aadharNo": "123456789012",
-            "vaccinationStatus": "firstDose",
+            "aadharNo": "123456789021",
+            "vaccinationStatus": "Done",
+            "userType": "user",
+            "createdAt": "2024-06-26T07:03:16.110Z",
+            "updatedAt": "2024-06-26T08:59:32.659Z",
             "__v": 0
-        },
+        }
+    ]
 }
 // More user objects...
 
@@ -258,7 +294,7 @@ This project is about Registration of Vaccine , an user can create a account and
 
 3. **Registered Vaccine Slots**: View the number of registered vaccine slots total on a given day.
 
-- Endpoint: `GET /registeredSlots`
+- Endpoint: `GET /registered-slots`
 
 - Request Query Parameter:
 
@@ -268,51 +304,36 @@ This project is about Registration of Vaccine , an user can create a account and
 
 ```json
 {
-    "message": "Available slots",
-    "data": 
+    "message": "Registered Slots",
+    "total": 5,
+    "data": [
         {
-            "_id": "6506bfb4bfe95c0a267495e8",
-            "date": "2021-06-30T00:00:00.000Z",
-            "startTime": "04:30  PM",
-            "endTime": "05:00 PM",
-            "availableDoses": 6,
+            "_id": "667a6d7592fcbffc2caa874f",
+            "date": "2024-01-01T00:00:00.000Z",
+            "startTime": "16:30",
+            "endTime": "17:00",
+            "availableDoses": 9,
+            "registeredUsers": [
+                "667a9560fd69a4e4448e7f03"
+            ],
             "__v": 0
         },
-
-}
+        {
+            "_id": "667a6d7592fcbffc2caa8747",
+            "date": "2024-01-01T00:00:00.000Z",
+            "startTime": "12:30",
+            "endTime": "13:00",
+            "availableDoses": 9,
+            "registeredUsers": [
+                "667bbd3417d80a5ad4a7a8ca"
+            ],
+            "__v": 0,
+        }
+    ]}
 ...more
 
 
 ```
-
-## Database Models
-
-### User Model
-
-- `name`: User's name.
-
-- `phoneNumber`: User's phone number (unique).
-
-- `password`: User's password.
-
-- `age`: User's age.
-
-- `pincode`: User's pincode.
-
-- `aadharNumber`: User's Aadhar number (unique).
-
-- `vaccinationStatus`: User's vaccination status ("none", "first_dose", "second_dose").
-
-
-### time Slot Model
-
-- `date`: Date of the vaccine slot.
-
-- `startTime`: Start time of the slot.
-
-- `endTime`: End time of the slot.
-
-- `availableDoses`: Number of available vaccine doses.
 
 
 ## Getting Started
@@ -353,5 +374,7 @@ npm install
 npm start
 
 ```
+## License
 
+This project is licensed under the MIT License. ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ---

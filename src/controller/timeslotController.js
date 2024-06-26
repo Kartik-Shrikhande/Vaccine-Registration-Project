@@ -1,40 +1,83 @@
-// Assuming you have a VaccineSlot model
-
 const timeslotModel = require('../models/timeslotModel');
 
 //----------------------------create slot API -----------------------------------------------------------//
+//On hitting of this API  all the slots gets created fo whole month
+
 const createVaccineSlots = async (req, res) => {
   try {
-    let { date, startTime, endTime } = req.body;
-    if (Object.keys(req.body).length == 0) return res.status(400).send({ message: 'enter required Data' });
-    if (!date) return res.status(400).send({ status: false, message: "Please enter valid date" })
-    if (!startTime) return res.status(400).send({ status: false, message: "Please enter valid startTime" })
-    if (!endTime) return res.status(400).send({ status: false, message: "Please enter valid endTime" })
+    const startDate = new Date('2024-01-01');
+    const endDate = new Date('2024-01-30');
+    const slots = [];
+    for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+      const date = currentDate.toISOString().split('T')[0];
 
-    // Validate the date format
-    const datePattern = /^(?:\d{4})-(?:0[1-9]|1\d|2\d|30)-(?:0[1-9]|1\d|2\d|3\d)$/;
-    if (!date || !date.match(datePattern)) {
-      return res.status(400).send({ message: 'Invalid date format. Please use YYYY-MM-DD format.' })
+      // Check if slots already exist for the current date
+      const existingSlots = await timeslotModel.find({ date });
+      if (existingSlots.length > 0) {
+        continue; // Skip if slots already exist for the date
+      }
+
+      // Create slots for the day (10 AM to 5 PM, every 30 minutes)
+      for (let hour = 10; hour < 17; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+          const startTime = new Date(`${date}T${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00Z`);
+          const endTime = new Date(startTime);
+          endTime.setMinutes(startTime.getMinutes() + 30);
+          const timeSlot = new timeslotModel({
+            date,
+            startTime: startTime.toISOString().split('T')[1].substr(0, 5),
+            endTime: endTime.toISOString().split('T')[1].substr(0, 5),
+          });
+          slots.push(timeSlot);
+        }
+      }
     }
-    const parsedDate = new Date(date)
-    const startDate = new Date('2021-06-01')
-    const endDate = new Date('2021-06-30')
-    //validating dates from 1-6-2021 to 30-06-2021
-    if (parsedDate < startDate || parsedDate > endDate)
-      return res.status(400).send({ message: 'Invalid date. Dates are only allowed from 1-6-2021 to 30-6-2021.' })
-    date = parsedDate
-    //checking if slot for given date and time already exist
-    let check = await timeslotModel.findOne({ date: date, startTime: startTime, endTime: endTime })
-    //start and end time of slot should not be same 
-    if (startTime == endTime) return res.status(400).send({ message: 'startTime and Endtime should not be same,and keep 30 min of slotTime' });
-    if (check) return res.status(400).send({ message: 'slots already exist for entered date or time, change date or timing' });
-    // Create a new vaccine slot
-    const newSlot = await timeslotModel.create(req.body);
-    return res.status(201).send({ message: 'Vaccine slot created successfully', data: newSlot });
-  }
-  catch (error) {
-    return res.status(500).send({ message: 'Slot creation failed' });
+    // Insert all slots for the month at once
+    await timeslotModel.insertMany(slots);
+    return res.status(201).json({ message: 'Slots Created Successfully', total: slots.length, data: slots });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
+
+//---------------------------- API to create slots datewise-----------------------------------------------------------//
+
+// const createVaccineSlots = async (req, res) => {
+//   const { date } = req.body;  // Expecting the date in YYYY-MM-DD format
+//   try {
+//     const startDate = new Date('2024-01-01');
+//     const endDate = new Date('2024-01-30');
+//     const currentDate = new Date(date);
+//     if (currentDate < startDate || currentDate > endDate) {
+//       return res.status(400).json({ message: 'Invalid date. Slots can only be created between January 1, 2024, and January 30, 2024.' });
+//     }
+//     const slots = [];
+//     const existingSlots = await timeslotModel.find({ date });
+//     if (existingSlots.length > 0) {
+//       return res.status(400).json({ message: 'Slots already exist for the given date' });
+//     }
+//     for (let hour = 10; hour < 17; hour++) {
+//       for (let minute = 0; minute < 60; minute += 30) {
+//         const startTime = new Date(`${date}T${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00Z`);
+//         const endTime = new Date(startTime);
+//         endTime.setMinutes(startTime.getMinutes() + 30);
+
+//         const timeSlot = new timeslotModel({
+//           date,
+//           startTime: startTime.toISOString().split('T')[1].substr(0, 5),
+//           endTime: endTime.toISOString().split('T')[1].substr(0, 5),
+//         });
+//         slots.push(timeSlot);
+//       }
+//     }
+//     await timeslotModel.insertMany(slots);
+//     return res.status(201).json({ message: 'Slots created successfully', total :slots.length,data:slots });
+//   } 
+//   catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
 //---------------------------------------------------------------------------------------------------//
-module.exports = { createVaccineSlots }
+
+module.exports = {createVaccineSlots}

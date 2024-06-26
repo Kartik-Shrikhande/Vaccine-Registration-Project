@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Schema for Vaccine Slot
 const vaccineSlotSchema = new mongoose.Schema({
   date: {
     type: Date,
@@ -19,7 +18,12 @@ const vaccineSlotSchema = new mongoose.Schema({
     required: true,
     default: 10, // Initially, each slot has 10 available doses
   },
-})
+  registeredUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+
+}, { timestamps: true })
 
 module.exports = mongoose.model('timeslot', vaccineSlotSchema);
 

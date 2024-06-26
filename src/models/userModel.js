@@ -30,10 +30,14 @@ const userSchema = new mongoose.Schema({
   },
   vaccinationStatus: {
     type: String,
-    enum: ['none', 'firstDose', 'secondDose'],
-    default: 'none',
+    enum: ['None', 'Done'],
+    default: 'None',
   },
-});
+  userType: {
+    type: String,
+    default: 'user'
+  }
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
 

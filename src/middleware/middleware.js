@@ -3,6 +3,7 @@ const { isValidObjectId } = require('mongoose')
 const userModel = require('../models/userModel')
 require('dotenv').config({ path: '.env' })
 
+
 //------------------------------------Authentication---------------------------------------------------------------------//
 
 const Authentication = async (req, res, next) => {
@@ -43,6 +44,7 @@ const Authorization = async function (req, res, next) {
     return res.status(500).send({ status: false, message: err.message })
   }
 }
+
 //----------------------------------------------------------------------------------------------------------------------//
 
 module.exports = { Authentication, Authorization }
